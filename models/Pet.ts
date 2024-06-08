@@ -10,6 +10,7 @@ export interface Pets extends mongoose.Document {
   image_url: string;
   likes: string[];
   dislikes: string[];
+  _id: string;
 }
 
 /* PetSchema will correspond to a collection in your MongoDB database. */
