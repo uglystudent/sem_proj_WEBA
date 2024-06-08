@@ -45,10 +45,10 @@ const Home = ({ pets }: Props) => {
                 </ul>
               </div>
               <div className="btn-container">
-                <Link href={`/edit/${pet._id}`}>
+                <Link href={{ pathname: "/[id]/edit", query: { id: pet._id } }}>
                   <button className="btn edit">Edit</button>
                 </Link>
-                <Link href={`/${pet._id}`}>
+                <Link href={{ pathname: "/[id]", query: { id: pet._id } }}>
                   <button className="btn view">View</button>
                 </Link>
               </div>
@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   const result = await Pet.find({}).lean();
   const pets = result.map((doc) => ({
-    _id: doc._id.toString(),
+    _id: doc._id.toString(), // Convert ObjectId to string
     name: doc.name,
     owner_name: doc.owner_name,
     image_url: doc.image_url,
