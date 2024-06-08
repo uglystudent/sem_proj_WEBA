@@ -8,10 +8,11 @@ type Props = {
 };
 
 const Index = ({ pets }: Props) => {
+  if (typeof pet._id === 'string' || typeof pet._id === 'number') {
   return (
     <>
       {pets.map((pet) => (
-        <div key={pet._id as string}>
+        <div key={pet._id}>
           <div className="card">
             <img src={pet.image_url} />
             <h5 className="pet-name">{pet.name}</h5>
@@ -51,6 +52,7 @@ const Index = ({ pets }: Props) => {
       ))}
     </>
   );
+  }
 };
 
 /* Retrieves pet(s) data from mongodb database */
