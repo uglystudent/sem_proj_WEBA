@@ -2,19 +2,28 @@ import Link from "next/link";
 import dbConnect from "../lib/dbConnect";
 import Pet, { Pets } from "../models/Pet";
 import { GetServerSideProps } from "next";
+import { Types } from "mongoose";
+
+type PetType = {
+  _id: Types.ObjectId;
+  name: string;
+  owner_name: string;
+  image_url: string;
+  likes: string[];
+  dislikes: string[];
+};
 
 type Props = {
-  pets: Pets[];
+  pets: PetType[];
 };
 
 const Index = ({ pets }: Props) => {
-  if (typeof pet._id === 'string' || typeof pet._id === 'number') {
   return (
     <>
       {pets.map((pet) => (
-        <div key={pet._id}>
+        <div key={pet._id.toString()}>
           <div className="card">
-            <img src={pet.image_url} />
+            <img src={pet.image_url} alt={`${pet.name}'s image`} />
             <h5 className="pet-name">{pet.name}</h5>
             <div className="main-content">
               <p className="pet-name">{pet.name}</p>
@@ -25,7 +34,7 @@ const Index = ({ pets }: Props) => {
                 <p className="label">Likes</p>
                 <ul>
                   {pet.likes.map((data, index) => (
-                    <li key={index}>{data} </li>
+                    <li key={index}>{data}</li>
                   ))}
                 </ul>
               </div>
@@ -33,16 +42,16 @@ const Index = ({ pets }: Props) => {
                 <p className="label">Dislikes</p>
                 <ul>
                   {pet.dislikes.map((data, index) => (
-                    <li key={index}>{data} </li>
+                    <li key={index}>{data}</li>
                   ))}
                 </ul>
               </div>
 
               <div className="btn-container">
-                <Link href={{ pathname: "/[id]/edit", query: { id: pet._id } }}>
+                <Link href={{ pathname: "/[id]/edit", query: { id: pet._id.toString() } }}>
                   <button className="btn edit">Edit</button>
                 </Link>
-                <Link href={{ pathname: "/[id]", query: { id: pet._id } }}>
+                <Link href={{ pathname: "/[id]", query: { id: pet._id.toString() } }}>
                   <button className="btn view">View</button>
                 </Link>
               </div>
@@ -52,7 +61,6 @@ const Index = ({ pets }: Props) => {
       ))}
     </>
   );
-  }
 };
 
 /* Retrieves pet(s) data from mongodb database */
@@ -64,11 +72,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   /* Ensures all objectIds and nested objectIds are serialized as JSON data */
   const pets = result.map((doc) => {
-    const pet = JSON.parse(JSON.stringify(doc));
+    const pet = doc.toObject();
+    pet._id = pet._id.toString();
     return pet;
   });
 
-  return { props: { pets: pets } };
+  return { props: { pets } };
 };
 
 export default Index;
